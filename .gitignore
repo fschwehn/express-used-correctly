@@ -30,9 +30,3 @@ bower_components
 # OS metadata
 .DS_Store
 Thumbs.db
-
-# bundle.js
-public/js/bundle.js
-
-#local modules
-/local
