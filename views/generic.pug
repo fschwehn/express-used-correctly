@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  h1= title
+    if pageTitle
+      |  - #{pageTitle}
+  
+  h3 test
+
+  +dl({
+    router: router,
+    baseUrl: req.baseUrl,
+    path: req.path,
+    fullPath: req.baseUrl + req.path,
+    originalUrl: req.originalUrl,
+  })
+
+  hr
+  h4 public
+
+  +link('/')
+  +link('/login')
+  +link('/redirect')
+
+  hr
+  h4 staff
+
+  +link('/members')
+  +link('/products')
+  
+  hr
+  h4 admin
+
+  +link('/admin/users')
+  +link('/admin/groups')

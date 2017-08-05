@@ -1,0 +1,36 @@
+mixin link(url)
+  div
+    a(href!=url)= url == '/' ? '/[home]' : url
+
+mixin dl(obj)
+  dl
+    for val, key in obj
+      div
+        dt= key
+        dd= val
+
+doctype html
+html
+  head
+    title= pageTitle + ' - ' + title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
+    style.
+      dl > div {
+        display: table-row;
+      }
+      dt {
+        display: table-cell;
+        text-align: right;
+        padding-right: 5px;
+        font-weight: bold;
+      }
+      dt:after {
+        content: ":";
+      }
+      dd {
+        display: table-cell;
+      }
+
+  body
+    block content
