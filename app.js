@@ -1,12 +1,11 @@
 global.log = console.log
 global.logj = x => console.log(JSON.stringify(x, null, '    '))
 
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express')
+    , path = require('path')
+    , favicon = require('serve-favicon')
+    , cookieParser = require('cookie-parser')
+    , bodyParser = require('body-parser')
 
 var app = express();
 
@@ -15,7 +14,7 @@ var app = express();
  *
  * app.locals will be inherited by each req.locals
  */
-app.locals.title = 'routers'
+app.locals.title = 'express used correctly'
 
 /**
  * apply settings
@@ -38,26 +37,59 @@ if (app.get('env') == 'production') {
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev', { skip: req => /^\/stylesheets/.test(req.originalUrl) }))
+
+/**
+ * dynamically load a logger for different runtime configs
+ */
+const loggerName = process.env.LOGGER || app.get('env')
+if (loggerName != 'none')
+  app.use(require('./loggers/' + loggerName))
+
+/**
+ * install body and cookie parsers
+ */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+/**
+ * serve public static content first
+ */
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use(require('./routers/public'))
-// app.use(require('./routers/staff'))
-// app.use('/admin', require('./routers/admin'))
+/**
+ * serve a single page
+ */
+app.get('/', (req, res, next) => res.render('generic', { pageTitle: 'home' }))
 
-// catch 404 and forward to error handler
+/**
+ * serve a route that provides both GET and POST
+ * 
+ * use req.path to redirect to the middleware's mount point
+ */
+app.route('/blog')
+  .get((req, res, next) => res.render('blog', { pageTitle: 'blog' }))
+  .post((req, res, next) => {
+    // after processing the post, redirect to the route's path
+    res.redirect(req.baseUrl + req.path)
+  })
+
+/**
+ * catch 404 and forward to error handler
+ */
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
-});
+})
 
-// error handler
+/**
+  * error handler
+  */
 app.use(function(err, req, res, next) {
+  // log all errors
   console.error(err)
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -65,6 +97,7 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
+})
 
 module.exports = app;
+

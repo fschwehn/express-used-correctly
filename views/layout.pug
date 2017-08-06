@@ -33,4 +33,9 @@ html
       }
 
   body
+    h1
+      a(href='/')= title
+      if pageTitle
+        |  - #{pageTitle}
+
     block content
