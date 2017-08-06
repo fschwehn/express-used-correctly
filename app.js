@@ -12,7 +12,7 @@ var app = express();
 /**
  * set locals
  *
- * app.locals will be inherited by each req.locals
+ * app.locals will be passed as locals to each render call if not overridden by res.locals.
  */
 app.locals.title = 'express used correctly'
 
@@ -61,6 +61,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * serve a single page
  */
 app.get('/', (req, res, next) => res.render('generic', { pageTitle: 'home' }))
+app.get('/locals', (req, res, next) => res.render('locals'))
 
 /**
  * serve a route that provides both GET and POST
